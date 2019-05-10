@@ -206,9 +206,13 @@ def _capture_export_scm_data(conanfile, conanfile_dir, destination_folder, outpu
         scm_data.revision = scm.get_revision()
         output.success("Revision deduced by 'auto': %s" % scm_data.revision)
 
+    if scm_data.revision == "None":
+        output.warn("Detected scm \"None\" - setting local path")
+        scmNone = True
+
     _replace_scm_data_in_conanfile(os.path.join(destination_folder, "conanfile.py"), scm_data)
 
-    if captured:
+    if captured or scmNone:
         # Generate the scm_folder.txt file pointing to the src_path
         src_path = scm.get_local_path_to_url(scm_data.url)
         if src_path:
